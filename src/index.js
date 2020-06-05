@@ -38,7 +38,7 @@ class Application extends React.Component {
       this.addToMap(this.state.mb);
     });
 
-    setInterval(this.addToMap, 20000);
+    setInterval(this.addToMap, 5000);
   }
 
   addToMap(m) {
