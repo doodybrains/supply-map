@@ -54,8 +54,8 @@ class Application extends React.Component {
               'data': data
             },
             'paint': {
-              'circle-radius': 5,
-              'circle-color': "green"
+              'circle-radius': 10,
+              'circle-color': "hotpink"
             }
           });
         }
