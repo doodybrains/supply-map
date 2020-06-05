@@ -1,6 +1,8 @@
 # SUPPLY MAP
 
-UPDATED BY GOOGLE SHEET
+SITE HERE: https://supply-map.netlify.app
+
+UPDATED BY GOOGLE SHEET (send message for access)
 
 ## To run:
 
