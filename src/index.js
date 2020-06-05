@@ -34,12 +34,11 @@ class Application extends React.Component {
 
     let _this = this;
     map.on('load',function(){
-       axios.get(process.env.REACT_APP_GOOGLE_SHEET)
+      axios.get(process.env.REACT_APP_GOOGLE_SHEET)
       .then((response) => {
         _this.setState({locations: response.data, mb: map});
         _this.addToMap(_this.state.mb);
       });
-
       setInterval(_this.addToMap,5000);
     });
   }
