@@ -18,6 +18,8 @@ class Application extends React.Component {
       locations: null,
       mb: null
     };
+
+    this.addToMap=this.addToMap.bind(this);
   }
 
   componentDidMount() {
@@ -35,6 +37,8 @@ class Application extends React.Component {
       this.setState({locations: response.data, mb: map});
       this.addToMap(this.state.mb);
     });
+
+    setInterval(this.addToMap, 20000);
   }
 
   addToMap(m) {
