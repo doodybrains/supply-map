@@ -67,7 +67,7 @@ class Application extends React.Component {
           m.on('click', 'csvData', function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
 
-            var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>` + `<h4>` + `<b>` + `Notes: ` + `</b>` + e.features[0].properties.Notes + `</h4>`;
+            var description = `<h3>${e.features[0].properties.Name}</h3><b>Time</b>:<h4>${e.features[0].properties.Time}</h4><b>Address</b>:<p>${e.features[0].properties.Address}</p><b>More Info</b>:<p>${e.features[0].properties.Notes}</p><br/>`;
 
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
               coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
