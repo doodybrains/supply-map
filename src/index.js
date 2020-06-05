@@ -32,7 +32,7 @@ class Application extends React.Component {
       zoom: zoom
     });
 
-  let _this = this;
+    let _this = this;
     map.on('load',function(){
        axios.get(process.env.REACT_APP_GOOGLE_SHEET)
       .then((response) => {
