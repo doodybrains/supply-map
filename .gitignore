@@ -3,3 +3,4 @@ src/config.js
 index.html
 node_modules/
 build/
+.env.*

@@ -3,9 +3,8 @@ import ReactDOM from 'react-dom'
 import mapboxgl from 'mapbox-gl'
 import csv2geojson from 'csv2geojson';
 import axios from 'axios';
-import config from './config';
 
-mapboxgl.accessToken = config.MAPBOX;
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX;
 
 class Application extends React.Component {
   mapRef = React.createRef();
@@ -31,7 +30,7 @@ class Application extends React.Component {
       zoom: zoom
     });
 
-    axios.get(config.GOOGLE_SHEET)
+    axios.get(process.env.REACT_APP_GOOGLE_SHEET)
     .then((response) => {
       this.setState({locations: response.data, mb: map});
       this.addToMap(this.state.mb);
