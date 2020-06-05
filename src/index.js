@@ -25,7 +25,7 @@ class Application extends React.Component {
 
     const map = new mapboxgl.Map({
       container: this.mapRef.current,
-      style: 'mapbox://styles/mapbox/streets-v9',
+      style: 'mapbox://styles/mapbox/streets-v11',
       center: [lng, lat],
       zoom: zoom
     });
@@ -54,24 +54,35 @@ class Application extends React.Component {
               'data': data
             },
             'paint': {
-              'circle-radius': 10,
+              'circle-radius': 7,
               'circle-color': "hotpink"
             }
           });
-        }
 
+
+          m.on('click', 'csvData', function (e) {
+            var coordinates = e.features[0].geometry.coordinates.slice();
+
+            var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>` + `<h4>` + `<b>` + `Notes: ` + `</b>` + e.features[0].properties.Notes + `</h4>`;
+
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+              coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            new mapboxgl.Popup()
+              .setLngLat(coordinates)
+              .setHTML(description)
+              .addTo(m);
+          });
+        }
       });
     }
-
   }
   render() {
     const { lng, lat, zoom } = this.state;
 
     return (
       <div>
-        <div className="inline-block absolute top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold">
-          <div>{`Longitude: ${lng} Latitude: ${lat} Zoom: ${zoom}`}</div>
-        </div>
         <div ref={this.mapRef} className="absolute top right left bottom" />
       </div>
     );
