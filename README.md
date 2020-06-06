@@ -8,8 +8,11 @@ npm install
 
 npm run start
 
-note: You'll need an API key for the Google Sheet and Mapbox in order to replicate our data.
+note: You'll need an API key for the Google Sheet and Mapbox in order to pull in live data. The Google Sheet is output as a csv. To use this code with your own data you will need to add a .env.development file to the folder root and add the following items:
 
+REACT_APP_GOOGLE_SHEET=link-for-your-google-sheet-output-as-csv
+
+REACT_APP_MAPBOX=api-key-for-your-mapbox-account
 
 ## How to get involved:
 
