@@ -2,8 +2,6 @@
 
 SITE HERE: http://supply-map.net/
 
-UPDATED BY GOOGLE SHEET (send message for access)
-
 ## To run locally:
 
 npm install
