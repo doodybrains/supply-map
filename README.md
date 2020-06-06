@@ -8,7 +8,7 @@ SITE HERE: http://supply-map.net/
 
 `npm run start`
 
-note: You'll need an API key for the Google Sheet and Mapbox in order to pull in live data. The Google Sheet is output as a csv. To use this code with your own data you will need to add a .env.development file to the folder root and add the following items:
+note: You'll need an API key for the Google Sheet and Mapbox in order to pull in live data. The Google Sheet is output as a csv. To use this code with your own data you will need to add a `.env.development` file to the root of the project and then add the following keys:
 
 ```
 REACT_APP_GOOGLE_SHEET=link-for-your-google-sheet-output-as-csv
