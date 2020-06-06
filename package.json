@@ -4,7 +4,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "serve": "serve -g build/ -l 8080"
+    "serve": "serve -s build/ -l 8080"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
