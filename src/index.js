@@ -35,7 +35,7 @@ class Application extends React.Component {
 
     let _this = this;
     map.on('load',function(){
-      axios.get(process.env.REACT_APP_GOOGLE_SHEET)
+      axios.get(`${process.env.REACT_APP_GOOGLE_SHEET}`)
       .then((response) => {
         _this.setState({locations: response.data, mb: map});
         _this.addToMap(_this.state.mb);
@@ -70,8 +70,8 @@ class Application extends React.Component {
 
           m.on('click', 'csvData', function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
-
-            var description = `<h3>${e.features[0].properties.Name}</h3><b>Date</b>:<h4>${e.features[0].properties.Date}</h4><b>Time</b>:<h4>${e.features[0].properties.Time}</h4><b>Address</b>:<p>${e.features[0].properties.Address}</p><b>More Info</b>:<p>${e.features[0].properties.Notes}</p><br/>`;
+            console.log(e.features[0].properties);
+            var description = `<h3>${e.features[0].properties.Name}</h3><b>Date</b>:<h4>${e.features[0].properties.Date}</h4><b>Time</b>:<h4>${e.features[0].properties.Time}</h4><b>Address</b>:<p>${e.features[0].properties.Address}</p><b>Bathroom</b>:<p>${e.features[0].properties.Bathroom}</p><b>More Info</b>:<p>${e.features[0].properties.Notes}</p><br/>`;
 
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
               coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
