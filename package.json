@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "serve": "serve -s build/ -l 8080"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
@@ -13,6 +14,7 @@
     "axios": "^0.19.2",
     "csv2geojson": "^5.1.1",
     "mapbox-gl": "^1.8.1",
+    "moment": "^2.26.0",
     "react": "^16.4.0",
     "react-dom": "^16.4.0"
   }
