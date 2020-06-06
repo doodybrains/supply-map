@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import mapboxgl from 'mapbox-gl'
 import csv2geojson from 'csv2geojson';
 import axios from 'axios';
+import moment from 'moment';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX;
 
@@ -45,7 +46,8 @@ class Application extends React.Component {
 
   addToMap(m) {
     if (this.state.locations) {
-      console.log('loaded', this.state.locations)
+      let todaysDate = moment().format('M/D/YY');
+      // console.log('loaded', this.state.locations)
       csv2geojson.csv2geojson(this.state.locations, {
         latfield: 'Latitude',
         lonfield: 'Longitude',
@@ -62,14 +64,14 @@ class Application extends React.Component {
             'paint': {
               'circle-radius': 7,
               'circle-color': "hotpink"
-            }
+            },
+            "filter": ["==", "Date", todaysDate]
           });
-
 
           m.on('click', 'csvData', function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
 
-            var description = `<h3>${e.features[0].properties.Name}</h3><b>Time</b>:<h4>${e.features[0].properties.Time}</h4><b>Address</b>:<p>${e.features[0].properties.Address}</p><b>More Info</b>:<p>${e.features[0].properties.Notes}</p><br/>`;
+            var description = `<h3>${e.features[0].properties.Name}</h3><b>Date</b>:<h4>${e.features[0].properties.Date}</h4><b>Time</b>:<h4>${e.features[0].properties.Time}</h4><b>Address</b>:<p>${e.features[0].properties.Address}</p><b>More Info</b>:<p>${e.features[0].properties.Notes}</p><br/>`;
 
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
               coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
