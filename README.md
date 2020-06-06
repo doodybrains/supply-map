@@ -16,6 +16,8 @@ REACT_APP_GOOGLE_SHEET=link-for-your-google-sheet-output-as-csv
 REACT_APP_MAPBOX=api-key-for-your-mapbox-account
 ```
 
+How and where to deploy the site is up to you. If you have a Netlify account its easy to connect your GitHub repo and push the code up there. We are currently hosting this site on Digital Ocean (s/o to Dan Shiffman for helping us do that!)
+
 ## How to get involved:
 
 We are looking for help in either:
