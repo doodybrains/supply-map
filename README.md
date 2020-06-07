@@ -1,6 +1,6 @@
 # SUPPLY MAP
 
-SITE HERE: http://supply-map.net/
+Live site is here, updated daily: http://supply-map.net/
 
 ## To run locally:
 
