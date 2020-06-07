@@ -31,6 +31,8 @@ Thank you to Dan Shiffman for the technical resources and all of our volunteers.
 
 #### coders take note:
 
+![screenshot of github repository - name for default branch is now defundthepolice](https://d2w9rnfcy7mm78.cloudfront.net/7575385/large_a00594f9ebd1e4b8155733b3f65a278c.png?1591545691?bc=0)
+
 We removed the "master" branch and renamed it. [There is power in naming things.](https://listen.datasociety.net/episodes/race-after-technology/transcript)
 
 *to do this on your own project follow these steps:*
