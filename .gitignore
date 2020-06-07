@@ -3,3 +3,4 @@ src/config.js
 node_modules/
 build/
 .env.*
+native/supplymapnative/node_modules/
