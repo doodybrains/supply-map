@@ -1,12 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,7 +6,8 @@ import {
   View,
   Text,
   StatusBar,
-} from 'react-native';
+  TouchableOpacity
+} from 'react-native'
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 
@@ -23,13 +16,21 @@ import smileyFaceGeoJSON from '../assets/smiley_face.json'
 import MapboxGL from "@react-native-mapbox-gl/maps"
 import axios from 'axios'
 import csv2geojson from 'csv2geojson'
+import Popup from './Popup'
+import ResourceView from './ResourceView'
 
 const DEFAULT_START_COORDINATE = [-73.9430786608703, 40.77609485];
 MapboxGL.setAccessToken("pk.eyJ1IjoiZG9vZHlicmFpbnMiLCJhIjoiY2tiMTgzbG9hMGk3YzJ0cHBpajhxa3BhZSJ9.-jakz9_3ComMK-QCxnQQIQ")
 // MapboxGL.setConnected(true)
 
 class App extends Component {
-  state = {}
+  state = {
+    annotationOpen: false,
+    annotationCoordinates: DEFAULT_START_COORDINATE,
+    cameraAnimationDuration: 2000,
+    zoom: 12
+  }
+  _zoom = 12
   constructor(props) {
     super(props)
   }
@@ -44,7 +45,7 @@ class App extends Component {
       delimiter: ','
     }, function (err, data) {
       that.setState({ geoJson: data })
-      console.log('data: ', data)
+      // console.log('data: ', data)
     })
 
     // let json = await res.json()
@@ -54,30 +55,106 @@ class App extends Component {
     MapboxGL.setTelemetryEnabled(false)
     this.fetchData()
   }
+  onCircleLayerPress = (e) => {
+    this.setState({ 
+      annotationOpen: true, 
+      annotationCoordinates: e.features[0].geometry.coordinates,
+      annotationContents: e.features[0].properties,
+      cameraAnimationDuration: 350
+    })
+  }
+  onMapPress = (e) => {
+    this.setState({ annotationOpen: false })
+  }
+  onPopupClose = (e) => {
+    this.setState({ annotationOpen: false })
+  }
+  onRegionDidChange = async () => {
+    const zoom = await this._map.getZoom();
+    this._zoom = zoom
+  }
   render() {
-    const { geoJson } = this.state
+    const { geoJson, annotationCoordinates, annotationOpen, annotationContents, cameraAnimationDuration, zoom } = this.state
     return (
       <>
         <StatusBar barStyle="dark-content" />
         <View style={styles.page}>
           <View style={styles.container}>
-            <MapboxGL.MapView style={styles.map}>
+            <MapboxGL.MapView 
+              style={styles.map} 
+              onPress={this.onMapPress}
+              ref={(c) => (this._map = c)}
+              onRegionDidChange={this.onRegionDidChange}
+              logoEnabled={false}
+            >
               <MapboxGL.Camera
-                zoomLevel={12}
-                centerCoordinate={DEFAULT_START_COORDINATE}
+                zoomLevel={this._zoom}
+                centerCoordinate={annotationCoordinates}
+                animationDuration={cameraAnimationDuration}
               />
 
-              { geoJson &&
-                <MapboxGL.ShapeSource id="smileyFaceSource" shape={geoJson}>
+              { geoJson && // Supplies needed layer
+                <MapboxGL.ShapeSource id="suppliesNeededSource" 
+                  shape={geoJson} 
+                  onPress={this.onCircleLayerPress}
+                >
                   <MapboxGL.CircleLayer
-                    id="smileyFaceFill"
-                    style={layerStyles.smileyFace}
+                    id="suppliesNeeded"
+                    style={layerStyles.suppliesNeeded}
+                    filter={['==', 'SuppliesNeeded', 'Yes']}
                   />
                 </MapboxGL.ShapeSource>              
               }
+
+              { geoJson && // Has Bathroom layer
+                <MapboxGL.ShapeSource id="hasBathroomSource" 
+                  shape={geoJson} 
+                  onPress={this.onCircleLayerPress}
+                >
+                  <MapboxGL.CircleLayer
+                    id="hasBathroom"
+                    style={layerStyles.withBathroom}
+                    filter={['all', ['!=', 'SuppliesNeeded', 'Yes'], ['==', 'Bathroom', 'Yes']]}
+                  />
+                </MapboxGL.ShapeSource>              
+              }
+
+              { geoJson && // No bathroom layer
+                <MapboxGL.ShapeSource id="noBathroomSource" 
+                  shape={geoJson} 
+                  onPress={this.onCircleLayerPress}
+                >
+                  <MapboxGL.CircleLayer
+                    id="noBathroom"
+                    style={layerStyles.noBathroom}
+                    filter={['all', ['!=', 'SuppliesNeeded', 'Yes'], ['!=', 'Bathroom', 'Yes']]}
+                  />
+                </MapboxGL.ShapeSource>              
+              }
+
+              { false && annotationOpen && 
+                <MapboxGL.PointAnnotation
+                  coordinate={annotationCoordinates}
+                  id="pt-ann">
+                  <Popup 
+                    contents={annotationContents}
+                    onClose={this.onPopupClose}
+                  />
+                </MapboxGL.PointAnnotation>
+              }
+
+              {/* <MapboxGL.MarkerView coordinate={DEFAULT_START_COORDINATE}>
+                <AnnotationContent title={'this is a marker view'} />
+              </MapboxGL.MarkerView> */}
             </MapboxGL.MapView>
           </View>
         </View>
+        { annotationOpen &&
+          <ResourceView
+            contents={annotationContents}
+            onClose={this.onPopupClose}
+          />
+        }
       </>
     );
   }
@@ -87,10 +164,29 @@ const layerStyles = {
   background: {
     backgroundPattern: gridPattern,
   },
-  smileyFace: {
+  suppliesNeeded: {
+    fillAntialias: true,
+    circleRadius: 8,
+    circleColor: 'red',
+    circleStrokeWidth: 0,
+  },
+  withBathroom: {
     fillAntialias: true,
     fillColor: 'white',
     fillOutlineColor: 'rgba(255, 255, 255, 0.84)',
+    circleRadius: 8,
+    circleColor: '#5D00FF',
+    circleStrokeWidth: 4,
+    circleStrokeColor: 'cyan'
+  },
+  noBathroom: {
+    fillAntialias: true,
+    fillColor: 'white',
+    fillOutlineColor: 'rgba(255, 255, 255, 0.84)',
+    circleRadius: 10,
+    circleColor: '#5D00FF',
+    circleStrokeWidth: 0,
+    circleStrokeColor: 'cyan'
   },
 }
 
