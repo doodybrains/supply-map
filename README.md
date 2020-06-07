@@ -28,6 +28,11 @@ Contact @doodybrains or @jackieis_online on Twitter to get involved in this proj
 
 Thank you to Dan Shiffman for the technical resources and all of our volunteers.
 
+Thank you to these projects and their makers:
+
+- https://scanmap.mobi by @frnsys
+- https://everestpipkin.github.io/image-scrubber/ by @everestpipkin
+
 
 #### coders take note:
 
