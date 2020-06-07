@@ -36,13 +36,13 @@ We removed the "master" branch and renamed it. [There is power in naming things.
 *to do this on your own project follow these steps:*
 
 ```
-git checkout -b adifferentname master    # create and switch to the release branch
-git push -u origin adifferentname        # push the release branch to the remote and track it
+git checkout -b adifferentname master 
+git push -u origin adifferentname       
 
 go to project on github.com, go to Settings > Branches 
 change default branch to adifferentname branch
 
-git branch -d master              # delete local master
-git push --delete origin master   # delete remote master
-git remote prune origin           # delete the remote tracking branch
+git branch -d master            
+git push --delete origin master  
+git remote prune origin        
 ```
