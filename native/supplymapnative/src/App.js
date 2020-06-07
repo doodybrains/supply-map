@@ -16,36 +16,83 @@ import {
   StatusBar,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 
-import MapboxGL from "@react-native-mapbox-gl/maps";
+import gridPattern from '../assets/grid_pattern.png'
+import smileyFaceGeoJSON from '../assets/smiley_face.json'
+import MapboxGL from "@react-native-mapbox-gl/maps"
+import axios from 'axios'
+import csv2geojson from 'csv2geojson'
 
+const DEFAULT_START_COORDINATE = [-73.9430786608703, 40.77609485];
 MapboxGL.setAccessToken("pk.eyJ1IjoiZG9vZHlicmFpbnMiLCJhIjoiY2tiMTgzbG9hMGk3YzJ0cHBpajhxa3BhZSJ9.-jakz9_3ComMK-QCxnQQIQ")
 // MapboxGL.setConnected(true)
 
 class App extends Component {
+  state = {}
+  constructor(props) {
+    super(props)
+  }
+  fetchData = async () => {
+    let res = await axios.get('https://docs.google.com/spreadsheets/d/e/2PACX-1vRebqazrV2dHi16R6ITZMc2SF3xg6bJhOcDkG2kYpChJjrqE8ndftmrDJ92-TOpKUMWGSpUKOgPRJkX/pub?output=csv')
+    // console.log('res is: ', res.data)
+    const that = this
+
+    csv2geojson.csv2geojson(res.data, {
+      latfield: 'Latitude',
+      lonfield: 'Longitude',
+      delimiter: ','
+    }, function (err, data) {
+      that.setState({ geoJson: data })
+      console.log('data: ', data)
+    })
+
+    // let json = await res.json()
+    // console.log('json is: ', json)
+  }
   componentDidMount() {
     MapboxGL.setTelemetryEnabled(false)
+    this.fetchData()
   }
   render() {
+    const { geoJson } = this.state
     return (
       <>
         <StatusBar barStyle="dark-content" />
         <View style={styles.page}>
           <View style={styles.container}>
-            <MapboxGL.MapView style={styles.map} />
+            <MapboxGL.MapView style={styles.map}>
+              <MapboxGL.Camera
+                zoomLevel={12}
+                centerCoordinate={DEFAULT_START_COORDINATE}
+              />
+
+              { geoJson &&
+                <MapboxGL.ShapeSource id="smileyFaceSource" shape={geoJson}>
+                  <MapboxGL.CircleLayer
+                    id="smileyFaceFill"
+                    style={layerStyles.smileyFace}
+                  />
+                </MapboxGL.ShapeSource>              
+              }
+            </MapboxGL.MapView>
           </View>
         </View>
       </>
     );
   }
 };
+
+const layerStyles = {
+  background: {
+    backgroundPattern: gridPattern,
+  },
+  smileyFace: {
+    fillAntialias: true,
+    fillColor: 'white',
+    fillOutlineColor: 'rgba(255, 255, 255, 0.84)',
+  },
+}
 
 const styles = StyleSheet.create({
   scrollView: {
