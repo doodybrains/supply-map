@@ -29,6 +29,6 @@ Contact @doodybrains or @jackieis_online on Twitter to get involved in this proj
 Thank you to Dan Shiffman for the technical resources and all of our volunteers.
 
 
-#### coders take note
+#### coders take note:
 
 We removed the "master" branch and renamed it. [There is power in naming things.](https://listen.datasociety.net/episodes/race-after-technology/transcript)
