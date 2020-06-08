@@ -60,12 +60,12 @@ class Map extends Component {
     this.fetchData()
     const { fetchLocations } = this.props
     fetchLocations()
-    this._fetchTimer = setTimeout(() => {
+    this._fetchTimer = setInterval(() => {
       fetchLocations()
     }, 30000)    
   }
   componentWillUnmount() {
-    clearTimeout(this._fetchTimer)
+    clearInterval(this._fetchTimer)
   }
   componentDidUpdate() {
     console.log('did update: ', this.props)
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "tomato"
+    backgroundColor: "black"
   },
   map: {
     flex: 1
