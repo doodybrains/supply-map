@@ -175,7 +175,9 @@ class Map extends Component {
                 </Text>
               </Text>
             </View>
-            <Text style={styles.lastUpdatedText}>Last updated: {timeAgo}</Text>
+            { lastUpdate > 0 && 
+              <Text style={styles.lastUpdatedText}>Last updated: {timeAgo}</Text>
+            }
           </View>
           { annotationOpen &&
             <ResourceView
