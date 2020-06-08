@@ -35,6 +35,7 @@ class Map extends Component {
     zoom: 12
   }
   _zoom = 12
+  _location = DEFAULT_START_COORDINATE
   constructor(props) {
     super(props)
   }
@@ -52,6 +53,7 @@ class Map extends Component {
   componentDidUpdate() {
   }
   onCircleLayerPress = (e) => {
+    this._location = e.features[0].geometry.coordinates
     this.setState({ 
       annotationOpen: true, 
       annotationCoordinates: e.features[0].geometry.coordinates,
@@ -67,16 +69,19 @@ class Map extends Component {
   }
   onRegionDidChange = async () => {
     const zoom = await this._map.getZoom();
+    const location = await this._map.getCenter()
     this._zoom = zoom
+    this._location = location
   }
   openLink = (link) => {
     Linking.openURL(link)
   }
   render() {
     const { geoJson, lastUpdate } = this.props
+    // console.log('GeoJSON is: ', geoJson)
     let todaysDate = moment().format('M/D/YY');
     const timeAgo = timeago.format(lastUpdate)
-    const { annotationCoordinates, annotationOpen, annotationContents, cameraAnimationDuration, zoom } = this.state
+    const { annotationCoordinates, annotationOpen, annotationContents, cameraAnimationDuration } = this.state
     return (
       <>
         <StatusBar barStyle="light-content" />
@@ -92,7 +97,7 @@ class Map extends Component {
               >
                 <MapboxGL.Camera
                   zoomLevel={this._zoom}
-                  centerCoordinate={annotationCoordinates}
+                  centerCoordinate={this._location}
                   animationDuration={cameraAnimationDuration}
                 />
 
