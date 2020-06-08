@@ -77,13 +77,7 @@ class Application extends React.Component {
                 0
               ],
               "circle-stroke-color": 'cyan',
-              'circle-color': [
-                'match',
-                ['get','SuppliesNeeded'],
-                'Yes',
-                'red',
-                '#5D00FF'
-              ]
+              'circle-color': '#5D00FF'
             },
             "filter": ["==", "Date", todaysDate]
           });
