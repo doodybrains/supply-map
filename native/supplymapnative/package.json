@@ -18,7 +18,10 @@
     "react-native": "0.62.2",
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.3.0",
+    "time-ago": "^0.2.1",
+    "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
