@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking } from 'react-native'
 
 export default class Popup extends Component {
   state = {}
@@ -37,7 +37,7 @@ export default class Popup extends Component {
 
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Address: </Text>
-            <Text style={styles.sectionContents}>{Address}</Text>          
+            <Text style={styles.sectionContentsUnderlined} onPress={() => Linking.openURL('https://maps.google.com/?q=' + Address + ' ' + Name)}>{Address}</Text>          
           </View>
 
           <View style={styles.sectionContainer}>
@@ -139,6 +139,11 @@ const styles = StyleSheet.create({
   sectionContents: {
     fontSize: 14,
     maxWidth: '75%'
+  },
+  sectionContentsUnderlined: {
+    fontSize: 14,
+    maxWidth: '75%',
+    textDecorationLine: 'underline'
   },
   closeButton: {
     borderWidth: 0,
