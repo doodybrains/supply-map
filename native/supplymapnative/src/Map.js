@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component, useCallback } from 'react'
 import * as timeago from 'timeago.js'
+import moment from 'moment'
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,7 +8,8 @@ import {
   View,
   Text,
   StatusBar,
-  TouchableOpacity
+  TouchableOpacity,
+  Linking
 } from 'react-native'
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
@@ -22,9 +24,10 @@ import csv2geojson from 'csv2geojson'
 import Popup from './Popup'
 import ResourceView from './ResourceView'
 import { fetchLocations } from './redux/actions/index.actions'
+import { REACT_APP_GOOGLE_SHEET, REACT_APP_MAPBOX } from 'react-native-dotenv'
 
 const DEFAULT_START_COORDINATE = [-73.9430786608703, 40.77609485];
-MapboxGL.setAccessToken("pk.eyJ1IjoiZG9vZHlicmFpbnMiLCJhIjoiY2tiMTgzbG9hMGk3YzJ0cHBpajhxa3BhZSJ9.-jakz9_3ComMK-QCxnQQIQ")
+MapboxGL.setAccessToken(REACT_APP_MAPBOX)
 // MapboxGL.setConnected(true)
 
 class Map extends Component {
@@ -39,7 +42,7 @@ class Map extends Component {
     super(props)
   }
   fetchData = async () => {
-    let res = await axios.get('https://docs.google.com/spreadsheets/d/e/2PACX-1vRebqazrV2dHi16R6ITZMc2SF3xg6bJhOcDkG2kYpChJjrqE8ndftmrDJ92-TOpKUMWGSpUKOgPRJkX/pub?output=csv')
+    let res = await axios.get(REACT_APP_GOOGLE_SHEET)
     // console.log('res is: ', res.data)
     const that = this
 
@@ -57,7 +60,12 @@ class Map extends Component {
     this.fetchData()
     const { fetchLocations } = this.props
     fetchLocations()
-    console.log('did mount: ', this.props)
+    this._fetchTimer = setTimeout(() => {
+      fetchLocations()
+    }, 30000)    
+  }
+  componentWillUnmount() {
+    clearTimeout(this._fetchTimer)
   }
   componentDidUpdate() {
     console.log('did update: ', this.props)
@@ -80,94 +88,121 @@ class Map extends Component {
     const zoom = await this._map.getZoom();
     this._zoom = zoom
   }
+  openLink = (link) => {
+    Linking.openURL(link)
+  }
   render() {
     const { geoJson, lastUpdate } = this.props
-    console.log('Last update: ', lastUpdate)
+    let todaysDate = moment().format('M/D/YY');
     const timeAgo = timeago.format(lastUpdate)
     const { annotationCoordinates, annotationOpen, annotationContents, cameraAnimationDuration, zoom } = this.state
     return (
       <>
-        <StatusBar barStyle="dark-content" />
-        <View style={styles.page}>
-          <View style={styles.container}>
-            <MapboxGL.MapView 
-              style={styles.map} 
-              onPress={this.onMapPress}
-              ref={(c) => (this._map = c)}
-              onRegionDidChange={this.onRegionDidChange}
-              logoEnabled={false}
-            >
-              <MapboxGL.Camera
-                zoomLevel={this._zoom}
-                centerCoordinate={annotationCoordinates}
-                animationDuration={cameraAnimationDuration}
-              />
+        <StatusBar barStyle="light-content" />
+        <SafeAreaView style={styles.safeAreaView}>
+          <View style={styles.page}>
+            <View style={styles.container}>
+              <MapboxGL.MapView 
+                style={styles.map} 
+                onPress={this.onMapPress}
+                ref={(c) => (this._map = c)}
+                onRegionDidChange={this.onRegionDidChange}
+                logoEnabled={false}
+              >
+                <MapboxGL.Camera
+                  zoomLevel={this._zoom}
+                  centerCoordinate={annotationCoordinates}
+                  animationDuration={cameraAnimationDuration}
+                />
 
-              { geoJson && // Supplies needed layer
-                <MapboxGL.ShapeSource id="suppliesNeededSource" 
-                  shape={geoJson} 
-                  onPress={this.onCircleLayerPress}
-                >
-                  <MapboxGL.CircleLayer
-                    id="suppliesNeeded"
-                    style={layerStyles.suppliesNeeded}
-                    filter={['==', 'SuppliesNeeded', 'Yes']}
-                  />
-                </MapboxGL.ShapeSource>              
-              }
+                { geoJson && // Supplies needed layer
+                  <MapboxGL.ShapeSource id="suppliesNeededSource" 
+                    shape={geoJson} 
+                    onPress={this.onCircleLayerPress}
+                  >
+                    <MapboxGL.CircleLayer
+                      id="suppliesNeeded"
+                      style={layerStyles.suppliesNeeded}
+                      filter={['all', ['==', 'SuppliesNeeded', 'Yes'], ['==', 'Date', todaysDate]] }
+                    />
+                  </MapboxGL.ShapeSource>              
+                }
 
-              { geoJson && // Has Bathroom layer
-                <MapboxGL.ShapeSource id="hasBathroomSource" 
-                  shape={geoJson} 
-                  onPress={this.onCircleLayerPress}
-                >
-                  <MapboxGL.CircleLayer
-                    id="hasBathroom"
-                    style={layerStyles.withBathroom}
-                    filter={['all', ['!=', 'SuppliesNeeded', 'Yes'], ['==', 'Bathroom', 'Yes']]}
-                  />
-                </MapboxGL.ShapeSource>              
-              }
+                { geoJson && // Has Bathroom layer
+                  <MapboxGL.ShapeSource id="hasBathroomSource" 
+                    shape={geoJson} 
+                    onPress={this.onCircleLayerPress}
+                  >
+                    <MapboxGL.CircleLayer
+                      id="hasBathroom"
+                      style={layerStyles.withBathroom}
+                      filter={['all', ['!=', 'SuppliesNeeded', 'Yes'], ['==', 'Bathroom', 'Yes'], ['==', 'Date', todaysDate]]}
+                    />
+                  </MapboxGL.ShapeSource>              
+                }
 
-              { geoJson && // No bathroom layer
-                <MapboxGL.ShapeSource id="noBathroomSource" 
-                  shape={geoJson} 
-                  onPress={this.onCircleLayerPress}
-                >
-                  <MapboxGL.CircleLayer
-                    id="noBathroom"
-                    style={layerStyles.noBathroom}
-                    filter={['all', ['!=', 'SuppliesNeeded', 'Yes'], ['!=', 'Bathroom', 'Yes']]}
-                  />
-                </MapboxGL.ShapeSource>              
-              }
+                { geoJson && // No bathroom layer
+                  <MapboxGL.ShapeSource id="noBathroomSource" 
+                    shape={geoJson} 
+                    onPress={this.onCircleLayerPress}
+                  >
+                    <MapboxGL.CircleLayer
+                      id="noBathroom"
+                      style={layerStyles.noBathroom}
+                      filter={['all', ['!=', 'SuppliesNeeded', 'Yes'], ['!=', 'Bathroom', 'Yes'], ['==', 'Date', todaysDate]]}
+                    />
+                  </MapboxGL.ShapeSource>              
+                }
 
-              { false && annotationOpen && 
-                <MapboxGL.PointAnnotation
-                  coordinate={annotationCoordinates}
-                  id="pt-ann">
-                  <Popup 
-                    contents={annotationContents}
-                    onClose={this.onPopupClose}
-                  />
-                </MapboxGL.PointAnnotation>
-              }
+                { false && annotationOpen && 
+                  <MapboxGL.PointAnnotation
+                    coordinate={annotationCoordinates}
+                    id="pt-ann">
+                    <Popup 
+                      contents={annotationContents}
+                      onClose={this.onPopupClose}
+                    />
+                  </MapboxGL.PointAnnotation>
+                }
 
-              {/* <MapboxGL.MarkerView coordinate={DEFAULT_START_COORDINATE}>
-                <AnnotationContent title={'this is a marker view'} />
-              </MapboxGL.MarkerView> */}
-            </MapboxGL.MapView>
+                {/* <MapboxGL.MarkerView coordinate={DEFAULT_START_COORDINATE}>
+                  <AnnotationContent title={'this is a marker view'} />
+                </MapboxGL.MarkerView> */}
+              </MapboxGL.MapView>
+            </View>
           </View>
-        </View>
-        <View style={styles.lastUpdated}>
-          <Text style={styles.lastUpdatedText}>Last updated: {timeAgo}</Text>
-        </View>
-        { annotationOpen &&
-          <ResourceView
-            contents={annotationContents}
-            onClose={this.onPopupClose}
-          />
-        }
+          {/* <View style={styles.lastUpdated}>
+            <Text style={styles.lastUpdatedText}>Last updated: {timeAgo}</Text>
+          </View> */}
+          <View style={styles.header}>
+            <Text style={styles.headerText}>
+              SUPPLIES LOCATIONS 4 BLM PROTESTORS ~ INFO REFLECTS WHAT'S AVAILABLE TODAY ~ CLICK DOTS FOR MORE INFO
+            </Text>
+          </View>
+          <View style={styles.footer}>
+            <View >
+              <TouchableOpacity onPress={() => this.openLink('https://m4bl.org/')}>
+                <Text style={styles.linkText}>#DEFUNDPOLICE #DEFENDBLACKLIFE</Text>
+              </TouchableOpacity> 
+              <Text>
+                <Text style={styles.headerText}> - the code for this map can be found </Text>
+                <Text style={styles.linkText} onPress={() => this.openLink('https://github.com/doodybrains/supply-map')}>
+                  here 
+                </Text>
+                <Text style={styles.headerText}>
+                  - submit requests and issues as they come up!
+                </Text>
+              </Text>
+            </View>
+            <Text style={styles.lastUpdatedText}>Last updated: {timeAgo}</Text>
+          </View>
+          { annotationOpen &&
+            <ResourceView
+              contents={annotationContents}
+              onClose={this.onPopupClose}
+            />
+          }
+        </SafeAreaView>
       </>
     );
   }
@@ -204,6 +239,10 @@ const layerStyles = {
 }
 
 const styles = StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+    position: 'relative'
+  },
   scrollView: {
     backgroundColor: Colors.lighter,
   },
@@ -262,11 +301,43 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     padding: 5,
+    paddingTop: 10,
     backgroundColor: 'black'
   },
   lastUpdatedText: {
     fontSize: 9,
     color: 'white',
+    paddingTop: 5,
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'black',
+    paddingTop: 25,
+    paddingBottom: 5
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'black',
+    paddingTop: 5,
+    paddingBottom: 5,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  headerText: {
+    color: 'white',
+    textAlign: 'center'
+  },
+  linkText: {
+    color: 'white',
+    textAlign: 'center',
+    textDecorationLine: 'underline'
   }
 });
 
