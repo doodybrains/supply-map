@@ -15,12 +15,9 @@ import {
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 
 import gridPattern from '../assets/grid_pattern.png'
-import smileyFaceGeoJSON from '../assets/smiley_face.json'
 import MapboxGL from "@react-native-mapbox-gl/maps"
-import axios from 'axios'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
-import csv2geojson from 'csv2geojson'
 import Popup from './Popup'
 import ResourceView from './ResourceView'
 import { fetchLocations } from './redux/actions/index.actions'
@@ -41,23 +38,8 @@ class Map extends Component {
   constructor(props) {
     super(props)
   }
-  fetchData = async () => {
-    let res = await axios.get(REACT_APP_GOOGLE_SHEET)
-    // console.log('res is: ', res.data)
-    const that = this
-
-    csv2geojson.csv2geojson(res.data, {
-      latfield: 'Latitude',
-      lonfield: 'Longitude',
-      delimiter: ','
-    }, function (err, data) {
-      that.setState({ geoJson: data })
-    })
-
-  }
   componentDidMount() {
     MapboxGL.setTelemetryEnabled(false)
-    this.fetchData()
     const { fetchLocations } = this.props
     fetchLocations()
     this._fetchTimer = setInterval(() => {
@@ -68,7 +50,6 @@ class Map extends Component {
     clearInterval(this._fetchTimer)
   }
   componentDidUpdate() {
-    console.log('did update: ', this.props)
   }
   onCircleLayerPress = (e) => {
     this.setState({ 

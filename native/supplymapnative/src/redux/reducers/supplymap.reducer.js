@@ -14,7 +14,6 @@ const supplyMapReducer = (state = initialState, action) => {
       return state
     }
     case FETCH_LOCATIONS_COMPLETE: {
-      console.log('reducer fetchLocations', action.geoJson)
       return {
         ...state,
         geoJson: action.geoJson,
