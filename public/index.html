@@ -4,61 +4,30 @@
   <title>supply map NYC</title>
   <meta property="og:url" content="http://supply-map.net" />
   <meta property="og:title" content="supply map NYC" />
-  <meta property="og:description" content="supplies locations for #BLM protestors in NYC" />
+  <meta property="og:description" content="" />
   <meta property="og:image" content="" />
   <meta charset='utf-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link href='https://api.mapbox.com/mapbox-assembly/mbx/v0.18.0/assembly.min.css' rel='stylesheet'>
-  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
   <style>
-  	.legend{
-  		position:fixed;
-  		width:180px;
-  		height: 100px;
-  		background-color:white;
-  		left:20px;
-  		bottom:62px;
-  		padding:8px 16px;
-  		font-size:12px;
-  		border:2px solid black;
-  	}
-  	.circle{
-  		width:13px;
-  		height:13px;
-  		background-color:#5D00FF;
-  		border-radius:10px;
-  		display:inline-block;
-  	}
-  	.red{
-  		background-color:red;
-  	}
-  	.bathroom{
-  		border:solid 3px;
-  		border-color:cyan;
-  	}
-
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Open Sans',sans-serif;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
   </style>
 </head>
 <body>
-  <div style="padding: 5px; font-size: 0.8675em; line-height: 1.425em; background-color: black; color: white; position: fixed; width: 100%; z-index: 9999; text-align: center;" class="title">SUPPLIES LOCATIONS 4 BLM PROTESTORS ~ INFO REFLECTS WHAT'S AVAILABLE TODAY ~ CLICK DOTS FOR MORE INFO ~ REFRESH PAGE FOR UPDATES!</div>
-
-  <a style="padding: 5px; text-transform: uppercase; letter-spacing: .05em; font-size: 0.75em; line-height: 1.5em; background-color: red; color: white; position: fixed; top: 27px; width: 100%; z-index: 9999; text-align: center;"  target="_blank" href="https://my.castlighthealth.com/corona-virus-testing-sites/?embed=true&from=NYCgov">new york city is offering free covid-19 tests - follow this link to find a site near you<span style="display: inline-block; padding-left: 3px; position: relative; top: -2px; ">&#8702; &#8702; &#8702;</span>
+  <a style="display: inline-block; color: white; padding: 5px 35px; text-transform: uppercase; letter-spacing: .05em; font-size: 0.75em; width: 100%; line-height: 1.5em; background-color: black; color: white; text-align: center;" target="_blank" href="https://my.castlighthealth.com/corona-virus-testing-sites/?embed=true&from=NYCgov">
+    new york city is offering free covid-19 tests - follow this link to find a site near you<span style="padding-left: 3px; position: relative; top: -2px; ">&#8702; &#8702; &#8702;</span>
   </a>
-
+  <p style="padding: 45px 5px 5px 5px; text-transform: uppercase; letter-spacing: .05em; font-size: 1.75em; max-width: 400px; margin: 0 auto; right: 0; left: 0; line-height: 1.5em; background-color: white; color: color; position: fixed; top: 50px; width: 100%; z-index: 9999; text-align: center;">
+    the map will be back in a few days - check <a style="text-decoration: underline; color: black;" href="https://www.google.com/maps/d/u/0/viewer?mid=1GjWT8qpHkGM0U0hI6_2v_xla7GaUNr7p&ll=40.71084876280066%2C-73.95839744369205&z=13">#openyourlobby</a> for latest spaces open to protestors</p>
   <div id='app'></div>
-  <div style="padding: 5px; font-size: 0.75em; line-height: 1.425em; background-color: black; color: white; position: fixed; bottom: 0; bottom: 0; width: 100%; z-index: 9999; text-align: center;" class="title">
-    <a style="text-decoration: underline;" href="https://m4bl.org" target="_blank">
-    #DEFUND POLICE #DEFENDBLACKLIFE
-  </a> - the code for this map can be found <a style="text-decoration: underline;" href="https://github.com/doodybrains/supply-map" target="_blank">here</a> - submit requests and issues as they come up!</div>
-
-  <div class="legend">
-  	<b>Legend</b>
-  	<div class="line"><div class="circle"></div>&nbsp;&nbsp; Supplies Available</div>
-  	<div class="line"><div class="circle bathroom"></div>&nbsp;&nbsp; Bathroom Available</div>
-  	<!-- <div class="line"><div class="circle red"></div>&nbsp;&nbsp; Supplies Needed</div> -->
-
+  <div style="padding: 5px; font-size: 0.75em; line-height: 1.425em; background-color: black; color: white; position: fixed; left: 0; bottom: 0; width: 100%; z-index: 9999; text-align: center;" class="title">
+    <a style="color: white; text-decoration: underline;" href="https://m4bl.org" target="_blank">
+    #DEFUND POLICE #DEFENDBLACKLIFE</a>
   </div>
-
-  <script src='https://api.mapbox.com/mapbox-assembly/mbx/v0.18.0/assembly.js'></script>
 </body>
 </html>
